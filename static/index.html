@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Tiktoken Counter</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="workspace" aria-label="Token counter">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Token Counter</p>
+            <h1>Count prompt and file tokens</h1>
+          </div>
+          <button id="countButton" type="button">Count tokens</button>
+        </header>
+
+        <div id="status" class="status" role="status">Loading tokenizers...</div>
+
+        <section class="controls" aria-label="Tokenizer settings">
+          <label>
+            <span>Provider</span>
+            <select id="provider">
+              <option value="openai">OpenAI</option>
+              <option value="gemini">Gemini</option>
+              <option value="claude">Claude</option>
+            </select>
+          </label>
+          <label>
+            <span id="choiceTypeLabel">Token source</span>
+            <select id="choiceType">
+              <option value="model">Model</option>
+              <option value="encoding">Encoding</option>
+            </select>
+          </label>
+          <label class="grow">
+            <span id="choiceLabel">Model</span>
+            <select id="choice"></select>
+          </label>
+          <label class="grow">
+            <span id="customLabel">Custom model or encoding</span>
+            <input id="customChoice" type="text" placeholder="Optional, e.g. gpt-4o-mini" />
+          </label>
+          <label>
+            <span>Media detail</span>
+            <select id="mediaDetail">
+              <option value="auto">Auto</option>
+              <option value="low">Low</option>
+              <option value="high">High</option>
+            </select>
+          </label>
+          <label>
+            <span>OCR text</span>
+            <select id="ocrMode">
+              <option value="off">Off</option>
+              <option value="auto">Auto</option>
+              <option value="always">Always</option>
+            </select>
+          </label>
+        </section>
+
+        <section class="editor-grid">
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Prompt</h2>
+              <button id="clearPrompt" type="button" class="secondary">Clear</button>
+            </div>
+            <textarea id="prompt" spellcheck="false" placeholder="Paste or write your prompt here..."></textarea>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Files</h2>
+              <label class="file-button">
+                Add files
+                <input id="fileInput" type="file" multiple />
+              </label>
+            </div>
+            <div id="dropzone" class="dropzone">
+              <strong>Drop text, PDF, or image files here</strong>
+              <span>PDFs count extracted text plus page images. Images count visual tokens.</span>
+            </div>
+            <ul id="fileList" class="file-list" aria-label="Selected files"></ul>
+          </div>
+        </section>
+
+        <section class="results" aria-label="Token results">
+          <div class="metric">
+            <span>Prompt</span>
+            <strong id="promptTokens">0</strong>
+          </div>
+          <div class="metric">
+            <span>Files</span>
+            <strong id="fileTokens">0</strong>
+          </div>
+          <div class="metric primary">
+            <span>Combined</span>
+            <strong id="combinedTokens">0</strong>
+          </div>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="panel-header">
+            <h2>Breakdown</h2>
+            <span id="activeEncoding" class="muted">No tokenizer loaded</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Type</th>
+                  <th>Text</th>
+                  <th>Media</th>
+                  <th>Bytes</th>
+                  <th>Tokens</th>
+                </tr>
+              </thead>
+              <tbody id="breakdown">
+                <tr>
+                  <td colspan="6" class="empty">Run a count to see details.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="estimatePanel" class="panel estimate-panel hidden">
+          <div class="panel-header">
+            <h2>Claude Estimate Set</h2>
+            <span class="muted">Combined context</span>
+          </div>
+          <div id="estimateList" class="estimate-list"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="/app.js" defer></script>
+  </body>
+</html>

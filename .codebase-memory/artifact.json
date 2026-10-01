@@ -1,0 +1,11 @@
+{
+    "schema_version": 2,
+    "commit": "",
+    "indexed_at": "2026-10-01T05:45:57Z",
+    "project": "token-counter",
+    "nodes": 104,
+    "edges": 262,
+    "original_size": 1769472,
+    "compressed_size": 33871,
+    "compression_level": 3
+}
