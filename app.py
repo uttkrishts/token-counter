@@ -25,7 +25,7 @@ PDF_RENDER_DPI = 96
 DEFAULT_PDF_PAGE_WIDTH_PX = 816
 DEFAULT_PDF_PAGE_HEIGHT_PX = 1056
 
-GEMINI_MODELS = [
+GEMINI_MODEL_FALLBACKS = [
     "gemini-2.5-pro",
     "gemini-2.5-flash",
     "gemini-2.5-flash-lite",
@@ -118,6 +118,20 @@ def load_gemini() -> GeminiState:
         return GeminiState(None, str(exc))
 
     return GeminiState(local_tokenizer)
+
+
+def supported_gemini_models() -> list[str]:
+    try:
+        from google.genai import _local_tokenizer_loader as loader
+    except Exception:
+        return GEMINI_MODEL_FALLBACKS
+
+    model_maps = [
+        getattr(loader, "_GEMINI_MODELS_TO_TOKENIZER_NAMES", {}),
+        getattr(loader, "_GEMINI_STABLE_MODELS_TO_TOKENIZER_NAMES", {}),
+    ]
+    models = sorted({name for model_map in model_maps for name in model_map})
+    return models or GEMINI_MODEL_FALLBACKS
 
 
 def encoding_for_choice(state: TiktokenState, choice: str, choice_type: str):
@@ -532,7 +546,7 @@ def model_payload(tiktoken_state: TiktokenState, gemini_state: GeminiState) -> d
             "openai": openai,
             "gemini": {
                 "available": gemini_state.local_tokenizer is not None,
-                "models": [{"name": name} for name in GEMINI_MODELS],
+                "models": [{"name": name} for name in supported_gemini_models()],
                 "error": gemini_state.error,
                 "install": "python3 -m pip install -r requirements.txt",
             },
